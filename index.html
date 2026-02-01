@@ -21,7 +21,7 @@
             background: white;
             border-radius: 20px;
             padding: 25px;
-            max-width: 400px;
+            max-width: 420px;
             width: 100%;
             text-align: center;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
@@ -29,6 +29,7 @@
 
         h1 {
             color: #e63946;
+            font-size: 1.6rem;
         }
 
         .images {
@@ -46,22 +47,23 @@
 
         .buttons {
             position: relative;
-            height: 130px;
+            height: 160px;
             margin-top: 25px;
         }
 
         button {
-            padding: 12px 28px;
+            padding: 12px 26px;
             font-size: 1.1rem;
             border-radius: 30px;
             border: none;
             cursor: pointer;
-            transition: transform 0.2s ease;
+            user-select: none;
         }
 
         #yesBtn {
             background-color: #38b000;
             color: white;
+            z-index: 1;
         }
 
         #noBtn {
@@ -80,7 +82,7 @@
             background: rgba(0,0,0,0.6);
             justify-content: center;
             align-items: center;
-            z-index: 1000;
+            z-index: 999;
         }
 
         .popup {
@@ -123,7 +125,7 @@
         <img src="https://media.giphy.com/media/3oriO0OEd9QIDdllqo/giphy.gif">
     </div>
 
-    <div class="buttons">
+    <div class="buttons" id="buttonArea">
         <button id="yesBtn">Yes 💖</button>
         <button id="noBtn">No 💔</button>
     </div>
@@ -133,7 +135,10 @@
 <div class="overlay" id="overlay">
     <div class="popup">
         <h2>Yayyyy!!! 💕😍</h2>
-        <p>I knew you’d say yes ❤️<br>You just made my day 💖</p>
+        <p>
+            I knew you’d say yes ❤️<br>
+            You just made my day 💖
+        </p>
         <button class="close-btn" onclick="closePopup()">Close</button>
     </div>
 </div>
@@ -141,30 +146,65 @@
 <script>
     const noBtn = document.getElementById("noBtn");
     const yesBtn = document.getElementById("yesBtn");
-    const buttonArea = document.querySelector(".buttons");
+    const buttonArea = document.getElementById("buttonArea");
     const overlay = document.getElementById("overlay");
 
-    let scale = 1;
+    let width = noBtn.offsetWidth;
+    let height = noBtn.offsetHeight;
 
-    function moveAndShrinkNo() {
-        const maxX = buttonArea.offsetWidth - noBtn.offsetWidth;
-        const maxY = buttonArea.offsetHeight - noBtn.offsetHeight;
+    const minWidth = 30;
+    const minHeight = 20;
 
-        noBtn.style.left = Math.random() * maxX + "px";
-        noBtn.style.top = Math.random() * maxY + "px";
+    function moveAndShrinkNo(event) {
+        const areaRect = buttonArea.getBoundingClientRect();
 
-        // shrink but don't disappear
-        scale = Math.max(0.4, scale - 0.1);
-        noBtn.style.transform = `scale(${scale})`;
+        // Shrink real size (not transform)
+        if (width > minWidth) width -= 8;
+        if (height > minHeight) height -= 6;
+
+        noBtn.style.width = width + "px";
+        noBtn.style.height = height + "px";
+        noBtn.style.fontSize = Math.max(9, width / 5) + "px";
+
+        const maxX = areaRect.width - width;
+        const maxY = areaRect.height - height;
+
+        let x, y;
+        const safeDistance = 90;
+
+        const pointerX = event
+            ? event.clientX - areaRect.left
+            : Math.random() * areaRect.width;
+
+        const pointerY = event
+            ? event.clientY - areaRect.top
+            : Math.random() * areaRect.height;
+
+        do {
+            x = Math.random() * maxX;
+            y = Math.random() * maxY;
+        } while (
+            Math.abs(x - pointerX) < safeDistance &&
+            Math.abs(y - pointerY) < safeDistance
+        );
+
+        noBtn.style.left = x + "px";
+        noBtn.style.top = y + "px";
     }
 
     // Desktop
-    noBtn.addEventListener("mouseover", moveAndShrinkNo);
+    noBtn.addEventListener("mouseenter", moveAndShrinkNo);
 
     // Mobile
     noBtn.addEventListener("touchstart", (e) => {
         e.preventDefault();
-        moveAndShrinkNo();
+        moveAndShrinkNo(e.touches[0]);
+    });
+
+    // Final safety: block clicks forever 😈
+    noBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        moveAndShrinkNo(e);
     });
 
     yesBtn.addEventListener("click", () => {
