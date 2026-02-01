@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Will You Be My Valentine</title>
+    <title>Will You Be My Valentine 💘</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <style>
@@ -35,20 +35,21 @@
         .images {
             display: flex;
             justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
+            margin-top: 15px;
         }
 
         .images img {
-            width: 110px;
-            max-width: 45%;
+            width: 120px;
             border-radius: 12px;
         }
 
         .buttons {
-            position: relative;
-            height: 160px;
+            display: flex;
+            justify-content: center;
+            gap: 25px;
             margin-top: 25px;
+            height: 160px;
+            position: relative;
         }
 
         button {
@@ -69,9 +70,7 @@
         #noBtn {
             background-color: #d00000;
             color: white;
-            position: absolute;
-            left: 60%;
-            top: 50%;
+            touch-action: none;
         }
 
         /* POPUP */
@@ -121,7 +120,7 @@
     <h1>Pookieee, will you be my Valentine? 👀🥹</h1>
 
     <div class="images">
-        <img src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExbGsxajQzM3VkaHF0MGR6ZmlwcXc0OTZsZmdzMTQ3bHpkaWd1bDN5cSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/XYEEvoX0Ub69ZgN9ai/giphy.gif">        
+        <img src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExbGsxajQzM3VkaHF0MGR6ZmlwcXc0OTZsZmdzMTQ3bHpkaWd1bDN5cSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/XYEEvoX0Ub69ZgN9ai/giphy.gif">
     </div>
 
     <div class="buttons" id="buttonArea">
@@ -133,15 +132,14 @@
 <!-- POPUP -->
 <div class="overlay" id="overlay">
     <div class="popup">
-        <h2>Yayyyyyyyyy!<h2>
-        <h2>I knew you’d say yes💋</h2>
-        <p>
-            I love you toooooooo🌝🌝💋
-            <br>
-            <div class="images">
-                <img src="Poookie.jpg">
-            </div>            
-        </p>
+        <h2>Yayyyyyyyyy! 💕</h2>
+        <h2>I knew you’d say yes 😘</h2>
+        <p>I love you toooooooo 🌝💋</p>
+
+        <div class="images">
+            <img src="Poookie.jpg" alt="Love">
+        </div>
+
         <button class="close-btn" onclick="closePopup()">Close</button>
     </div>
 </div>
@@ -152,28 +150,46 @@
     const buttonArea = document.getElementById("buttonArea");
     const overlay = document.getElementById("overlay");
 
-    let width = noBtn.offsetWidth;
-    let height = noBtn.offsetHeight;
+    const minWidth = 28;
+    const minHeight = 18;
+    const safeDistance = 110;
 
-    const minWidth = 30;
-    const minHeight = 20;
+    let activated = false;
 
-    function moveAndShrinkNo(event) {
+    function activateNoButton() {
+        if (activated) return;
+
+        const rect = noBtn.getBoundingClientRect();
         const areaRect = buttonArea.getBoundingClientRect();
 
-        // Shrink real size (not transform)
-        if (width > minWidth) width -= 8;
-        if (height > minHeight) height -= 6;
+        noBtn.style.position = "absolute";
+        noBtn.style.left = rect.left - areaRect.left + "px";
+        noBtn.style.top = rect.top - areaRect.top + "px";
+
+        activated = true;
+    }
+
+    function moveAndShrinkNo(event) {
+        activateNoButton();
+
+        const areaRect = buttonArea.getBoundingClientRect();
+
+        let width = noBtn.offsetWidth;
+        let height = noBtn.offsetHeight;
+
+        if (width > minWidth) width -= 10;
+        if (height > minHeight) height -= 8;
 
         noBtn.style.width = width + "px";
         noBtn.style.height = height + "px";
-        noBtn.style.fontSize = Math.max(9, width / 5) + "px";
+        noBtn.style.fontSize = Math.max(8, width / 6) + "px";
+
+        if (width <= minWidth + 2) {
+            noBtn.style.pointerEvents = "none";
+        }
 
         const maxX = areaRect.width - width;
         const maxY = areaRect.height - height;
-
-        let x, y;
-        const safeDistance = 90;
 
         const pointerX = event
             ? event.clientX - areaRect.left
@@ -183,13 +199,13 @@
             ? event.clientY - areaRect.top
             : Math.random() * areaRect.height;
 
+        let x, y, distance;
+
         do {
             x = Math.random() * maxX;
             y = Math.random() * maxY;
-        } while (
-            Math.abs(x - pointerX) < safeDistance &&
-            Math.abs(y - pointerY) < safeDistance
-        );
+            distance = Math.hypot(x - pointerX, y - pointerY);
+        } while (distance < safeDistance);
 
         noBtn.style.left = x + "px";
         noBtn.style.top = y + "px";
@@ -202,11 +218,12 @@
     noBtn.addEventListener("touchstart", (e) => {
         e.preventDefault();
         moveAndShrinkNo(e.touches[0]);
-    });
+    }, { passive: false });
 
-    // Final safety: block clicks forever 😈
+    // Final defense 😈
     noBtn.addEventListener("click", (e) => {
         e.preventDefault();
+        e.stopPropagation();
         moveAndShrinkNo(e);
     });
 
