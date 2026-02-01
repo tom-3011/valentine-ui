@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Valentine 💖</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to right, #ff9a9e, #fad0c4);
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            text-align: center;
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            position: relative;
+            width: 350px;
+        }
+
+        h1 {
+            color: #e63946;
+        }
+
+        img {
+            width: 120px;
+            margin: 10px;
+        }
+
+        .buttons {
+            margin-top: 20px;
+            position: relative;
+            height: 100px;
+        }
+
+        button {
+            padding: 10px 25px;
+            font-size: 18px;
+            border-radius: 25px;
+            border: none;
+            cursor: pointer;
+        }
+
+        #yesBtn {
+            background-color: #38b000;
+            color: white;
+        }
+
+        #noBtn {
+            background-color: #d00000;
+            color: white;
+            position: absolute;
+        }
+
+        #message {
+            display: none;
+            font-size: 20px;
+            color: #6a040f;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Will you be my Valentine? 💘</h1>
+
+    <img src="https://media.giphy.com/media/l4pTfx2qLszoacZRS/giphy.gif" alt="Love">
+    <img src="https://media.giphy.com/media/3oriO0OEd9QIDdllqo/giphy.gif" alt="Heart">
+
+    <div class="buttons">
+        <button id="yesBtn">Yes 💖</button>
+        <button id="noBtn">No 💔</button>
+    </div>
+
+    <div id="message">
+        Yayyyy!!! 💕😍  
+        You just made my day 💖
+    </div>
+</div>
+
+<script>
+    const noBtn = document.getElementById("noBtn");
+    const yesBtn = document.getElementById("yesBtn");
+    const message = document.getElementById("message");
+
+    noBtn.addEventListener("mouseover", () => {
+        const container = document.querySelector(".buttons");
+        const maxX = container.offsetWidth - noBtn.offsetWidth;
+        const maxY = container.offsetHeight - noBtn.offsetHeight;
+
+        const randomX = Math.random() * maxX;
+        const randomY = Math.random() * maxY;
+
+        noBtn.style.left = randomX + "px";
+        noBtn.style.top = randomY + "px";
+    });
+
+    yesBtn.addEventListener("click", () => {
+        message.style.display = "block";
+    });
+</script>
+
+</body>
+</html>
